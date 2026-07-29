@@ -19,3 +19,17 @@ reviews and their embeddings so no orphaned data remains after deleting a profil
 **Setup confirmation:** [✓] App runs locally at localhost:5173
 
 **Cohort ledger:** [✓] Issue added to cohort ledger
+
+## Week 8 — Reproduction & solution planning
+
+**Reproduction commit link:** [link to commit documenting the reproduced issue]
+
+**Reproduction summary:**
+I created a unit test that creates a temporary user profile in CHROMADB and add a dummy memory chunk to it. delete_profile() is then called to see if all the reviews and ingested files were deleted on the postgreSQL side. The test then also checks if any memory chunks were left behind in this case the 0 chunks are expected but 1 chunk remains which proves that this bug exists. 
+
+**PLAN.md link:** [link to PLAN.md in your fork]
+
+**Walkthrough video (recommended):** [link to your Loom video, ≤2 min — recommended, not graded]
+
+**Blockers or open questions:**
+[Anything you're still uncertain about going into Week 9, or leave blank]
