@@ -37,7 +37,7 @@ I created a unit test that creates a temporary user profile in CHROMADB and add 
 
 ### Check-in 2 (end of week)
 
-**PR link:** [link to your submitted pull request]
+**PR link:** [PR](https://github.com/ascherj/pathreview/pull/861)
 
 **Branch:** `fix/80-cascade-delete-profile-reviews`
 
