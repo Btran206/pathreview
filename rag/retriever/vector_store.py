@@ -3,6 +3,7 @@
 import chromadb
 import structlog
 from chromadb.api.models.Collection import Collection
+from chromadb.errors import NotFoundError
 
 logger = structlog.get_logger()
 
@@ -107,6 +108,21 @@ class VectorStore:
             "vector_query_complete", collection=collection_name, results_count=len(retrieved)
         )
         return retrieved
+
+    def delete_collection(self, collection_name: str) -> None:
+        """Delete an entire collection, e.g. when a profile is deleted.
+
+        No-ops if the collection doesn't exist (e.g. the profile never had
+        any ingested sources).
+
+        Args:
+            collection_name: Collection to delete
+        """
+        try:
+            self.client.delete_collection(name=collection_name)
+            logger.info("deleted_collection", collection_name=collection_name)
+        except NotFoundError:
+            logger.info("delete_collection_not_found", collection_name=collection_name)
 
     def delete_by_source_id(self, source_id: str, collection_name: str) -> None:
         """Delete all chunks from a source (for re-ingestion).

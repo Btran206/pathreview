@@ -8,6 +8,7 @@ from api.schemas.profile import ProfileCreate, ProfileUpdate
 from core.models.ingested_source import IngestedSource
 from core.models.profile import Profile
 from core.models.review import Review
+from rag.retriever.vector_store import VectorStore
 
 log = structlog.get_logger()
 
@@ -102,6 +103,12 @@ async def delete_profile(
 
         # Delete profile
         await db.delete(profile)
+
+        # Delete the profile's ChromaDB embeddings before committing so a
+        # vector store failure rolls back the SQL deletes instead of
+        # leaving orphaned embeddings behind.
+        VectorStore().delete_collection(f"profile_{profile_id}")
+
         await db.commit()
 
         log.info("profile_deleted_cascade", profile_id=str(profile_id))
