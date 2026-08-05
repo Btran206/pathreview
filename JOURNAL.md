@@ -29,3 +29,31 @@ I created a unit test that creates a temporary user profile in CHROMADB and add 
 
 **PLAN.md link:** https://github.com/Btran206/pathreview/blob/fix/80-profile-delete-cascade/PLAN.md
 
+## Week 9 — Solution building & PR submission
+
+### Check-in 1 (mid-week)
+
+**Skipped**
+
+### Check-in 2 (end of week)
+
+**PR link:** [link to your submitted pull request]
+
+**Branch:** `fix/80-cascade-delete-profile-reviews`
+
+**What you built:**
+Added `VectorStore.delete_collection()` in `rag/retriever/vector_store.py`, which drops a profile's entire ChromaDB collection and silently no-ops if the collection never existed (e.g. a profile with no ingested sources). Wired it into `delete_profile()` in `core/services/profile_service.py`, calling it after the SQL deletes but before the final `db.commit()`, so a ChromaDB failure rolls back the Postgres deletes instead of leaving the two systems inconsistent.
+
+**Tests added or updated:**
+- `tests/unit/test_vector_store.py` (new): unit tests for `delete_collection()` in isolation — deleting an existing collection, deleting a nonexistent one (no-op), and deleting twice (no-op).
+- `tests/unit/test_profile_service.py` (new): tests for `delete_profile()`'s Postgres-side cascade and its interaction with `VectorStore` — reviews/sources/profile all get deleted and committed, a not-found profile short-circuits without touching the DB or vector store, a `VectorStore` failure rolls back the transaction, and a documented edge case where a Postgres commit failure *after* a successful vector cleanup can't be undone on the Chroma side.
+- `tests/unit/test_profile_delete_vector_cleanup.py` (renamed from `test_profile_delete_cascade.py`, updated): end-to-end tests against a real (tmp-dir-backed) ChromaDB instance confirming `delete_profile()` actually removes the profile's collection — covering a single ingested source, multiple sources sharing one collection, and a profile with no ingested sources.
+
+**Self-review confirmation:** [✓] make check passes  [✓] make test-unit passes
+
+`make test-unit` PR branch: 385 passed vs. main's 375 passed which we added 10 new tests.
+
+`make check` 178 errors on PR branch vs. 182 on main — 4 fewer, all pre-existing issues in files we didn't touch.
+Typecheck: 100 errors on PR branch vs. 103 on main — 3 fewer, matching the annotations we added to profile_service.py.
+
+**Draft PR feedback received from:** None
