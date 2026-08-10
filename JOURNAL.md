@@ -57,3 +57,34 @@ Added `VectorStore.delete_collection()` in `rag/retriever/vector_store.py`, whic
 Typecheck: 100 errors on PR branch vs. 103 on main — 3 fewer, matching the annotations we added to profile_service.py.
 
 **Draft PR feedback received from:** None
+
+## Week 10 — Iteration & reflection
+
+### Reviewer feedback
+
+**Feedback received:** [ ] Yes  [✓] No — still awaiting review
+
+**Summary of feedback:**
+N/A
+
+**How you responded:**
+N/A
+
+---
+
+### Reflection
+
+**What was harder than you expected?**
+Getting past the pre-commit hooks was a real headache. I didn't fully understand what was going on and I eventually resolved it after realizing mypy was following imports from my new test file into pre-existing modules and type-checking their bodies too. I also thought that this issue was a simple couple of lines fix where a bug in the logic needed to be adressed, but I had to desingn and implement an entire ChomaDB vector store deletion and making sure it correctly hands off with the sql side.
+
+**What did you learn about working in a large codebase?**
+I learned how important it is to understand what is doing what because a simple change can lead to an entire rabbit hole of "did my change break this" from "was this already broken". Running a make test-unit and make check on main as a baseline and doing a comparison between my branch the main branch definitely helped out when trying to figure out if my code messed up anything.
+
+**How did AI tools help — and where did they fall short?**
+AI was very useful in the early stages of understanding the codebase. It helped summarize and walk me through what each module does and how it interacts with other ones. It was also very useful in creating test cases. AI fell short when it started proposing fixes outside the scope of this issue and touching files outside the fix. The first implementation of delete_collection() also caught a bare Exception instead of the specific NotFoundError which is problematic in specificity especially when trying to understand failure points.
+
+**What would you do differently if you started over?**
+I would definitely try to create test cases before I implement any code because once the implementation is already done, It's a lot harder to pinpoint bugs if you're trying to account for them after the fact.
+
+**What are you most proud of from this module?**
+I've never worked with large codebases before so creating a submitting a PR definitely made me feel accomplished.
